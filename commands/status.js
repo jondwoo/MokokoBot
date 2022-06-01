@@ -6,31 +6,47 @@ import { request } from 'undici'
 export default {
   data: new SlashCommandBuilder()
     .setName('status')
-    .setDescription('Replies with status of the specified server')
-    .addStringOption(option =>
-      option.setName('server')
-        .setDescription('The server to look up')
-        .setRequired(true)
-        .addChoices(
-          { name: 'Rohendel', value: 'Rohendel' },
-          { name: 'Enviska', value: 'Enviska' },
-        )),
+    .setDescription('Replies with status of the specified server'),
   async execute(interaction) {
-    const server = interaction.options.getString('server');
+    const NAWest = ['Akkan', 'Bergstrom', 'Enviska', 'Mari', 'Rohendel', 'Shandi', 'Valtan']
 
-    const rawData = await request(`http://lostarkapi.herokuapp.com/server/${server}`)
+    const rawData = await request(`http://lostarkapi.herokuapp.com/server/all`)
     const res = await getJSONResponse(rawData.body);
 
     if (res.status !== 200) {
       return interaction.reply('Error fetching data')
     }
 
+    let stringVal;
+    NAWest.forEach((server) => {
+      const status = res.data[server].split(' ')[1]
+
+      let symbol
+      switch (status) {
+        case 'Ok':
+          symbol = '🟢'
+          break;
+        case 'Busy':
+          symbol = '⚠️'
+          break;
+        case 'Full':
+          symbol = '❌'
+          break;
+        case 'Maintenance':
+          symbol = '🛠️'
+          break;
+        default:
+          break;
+      }
+
+      stringVal += `${symbol} ${server}\n`
+    })
+
     const embed = new MessageEmbed()
       .setColor('#EFFF00')
-      .setTitle(`${server}`)
-      .addFields(
-        { name: 'Status', value: res.data[server] },
-      );
+      .setTitle('Lost Ark Server Status')
+      .setDescription('\:green_circle: Online \:exclamation:  Busy ')
+      .addField('NA West', stringVal, true)
 
     return interaction.reply({ embeds: [embed] });
   },
