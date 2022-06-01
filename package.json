@@ -9,7 +9,9 @@
     "lint": "npx eslint app.js",
     "lint:fix": "npm run lint -- --fix",
     "prettier": "npx prettier app.js --check",
-    "prettier:fix": "npm run prettier -- --write"
+    "prettier:fix": "npm run prettier -- --write",
+    "bootstrap": "rm -rf ./node_modules && npm i",
+    "bootstrap-ci": "rm -rf ./node_modules && npm ci"
   },
   "repository": {
     "type": "git",
@@ -33,6 +35,7 @@
     "discord-api-types": "^0.33.1",
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "undici": "^5.4.0"
   }
 }
