@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
+import { MessageEmbed } from 'discord.js'
 import getJSONResponse from '../util/getJSONResponse.js'
 import { request } from 'undici'
 
@@ -24,6 +25,13 @@ export default {
       return interaction.reply('Error fetching data')
     }
 
-    return interaction.reply(`${server}: ${res.data[server]}`)
+    const embed = new MessageEmbed()
+      .setColor('#EFFF00')
+      .setTitle(`${server}`)
+      .addFields(
+        { name: 'Status', value: res.data[server] },
+      );
+
+    return interaction.reply({ embeds: [embed] });
   },
 };
