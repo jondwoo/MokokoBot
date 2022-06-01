@@ -5,12 +5,25 @@ import { request } from 'undici'
 export default {
   data: new SlashCommandBuilder()
     .setName('status')
-    .setDescription('Replies with status of all servers'),
+    .setDescription('Replies with status of the specified server')
+    .addStringOption(option =>
+      option.setName('server')
+        .setDescription('The server to look up')
+        .setRequired(true)
+        .addChoices(
+          { name: 'Rohendel', value: 'Rohendel' },
+          { name: 'Enviska', value: 'Enviska' },
+        )),
   async execute(interaction) {
-    const rawData = await request("http://lostarkapi.herokuapp.com/server/all")
-    const res = await getJSONResponse(rawData.body);
-    console.log(res.data)
+    const server = interaction.options.getString('server');
 
-    return interaction.reply(`Rohendel: ${res.data.Rohendel}`)
+    const rawData = await request(`http://lostarkapi.herokuapp.com/server/${server}`)
+    const res = await getJSONResponse(rawData.body);
+
+    if (res.status !== 200) {
+      return interaction.reply('Error fetching data')
+    }
+
+    return interaction.reply(`${server}: ${res.data[server]}`)
   },
 };
