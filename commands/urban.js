@@ -7,10 +7,10 @@ export default {
     .setName('urban')
     .setDescription('Replies with urban dictionary definition of user term')
     .addStringOption(option =>
-      option.setName('input')
-        .setDescription('The input to echo back')),
+      option.setName('term')
+        .setDescription('The word to look up')),
   async execute(interaction) {
-    const term = interaction.options.getString('input');
+    const term = interaction.options.getString('term');
 
     if (term) {
       const query = new URLSearchParams({ term });
